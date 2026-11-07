@@ -202,7 +202,7 @@ const VIDEO_BACKUP={
  interior:'https://videos.pexels.com/video-files/34555903/14641710_4096_2160_24fps.mp4',
  detail:''
 };
-const FILM_FALLBACK={hero:IMG.hero,interior:IMG.wide,detail:IMG.cover};
+const FILM_FALLBACK={hero:IMG.wide,interior:IMG.hand,detail:IMG.prism};
 const videoSources=src=>'<source src="'+VIDEO[src]+'" type="video/mp4">'+(VIDEO_BACKUP[src]?'<source src="'+VIDEO_BACKUP[src]+'" type="video/mp4">':'');
 const film=(src,extra='')=>{
  const poster=FILM_FALLBACK[src],high=src==='hero';
@@ -265,26 +265,43 @@ function initMedia(){
  $$('video').forEach(v=>{
   if(v.dataset.mediaInit==='1')return;
   v.dataset.mediaInit='1';
-  v.muted=true;v.playsInline=true;
+  v.muted=true;v.defaultMuted=true;v.playsInline=true;
   v.setAttribute('muted','');v.setAttribute('playsinline','');
   const priority=v.dataset.priority==='high';
+  const keepPoster=()=>v.classList.remove('is-playing');
   v.addEventListener('playing',()=>v.classList.add('is-playing'));
-  v.addEventListener('error',()=>v.classList.remove('is-playing'));
+  ['waiting','stalled','error','abort'].forEach(evt=>v.addEventListener(evt,keepPoster));
+  const start=()=>{
+   if(!v.paused)return;
+   try{
+    const p=v.play();
+    if(p&&typeof p.catch==='function')p.catch(keepPoster);
+   }catch(err){keepPoster();}
+  };
+  if(priority){
+   // The hero is already marked autoplay + preload=auto in the markup.
+   // Do not call load() here: it resets the browser's in-progress media request.
+   v.addEventListener('loadeddata',start,{once:true});
+   v.addEventListener('canplay',start,{once:true});
+   start();
+   return;
+  }
   const activate=()=>{
    if(v.dataset.mediaRequested==='1')return;
    v.dataset.mediaRequested='1';
-   v.preload=priority?'auto':'metadata';
-   try{v.load();const p=v.play();if(p&&typeof p.catch==='function')p.catch(()=>{});}catch(err){}
+   v.preload='auto';
+   v.addEventListener('loadeddata',start,{once:true});
+   v.addEventListener('canplay',start,{once:true});
+   if(v.readyState>=2)start();else v.load();
   };
-  if(priority){activate();return;}
   if('IntersectionObserver' in window){
    const observer=new IntersectionObserver(entries=>{
     if(entries.some(e=>e.isIntersecting)){observer.disconnect();activate();}
-   },{rootMargin:'350px 0px'});
+   },{rootMargin:'500px 0px'});
    observer.observe(v);
   }else activate();
   const r=v.getBoundingClientRect();
-  if(r.top<innerHeight+350&&r.bottom>-350)activate();
+  if(r.top<innerHeight+500&&r.bottom>-500)activate();
  });
 }
 initMedia();
