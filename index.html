@@ -251,7 +251,7 @@ addEventListener('hashchange',go);go();
 
 
 function initMedia(){
- $('video').forEach(v=>{
+ $$('video').forEach(v=>{
   if(v.dataset.mediaInit==='1')return;
   v.dataset.mediaInit='1';v.muted=true;v.playsInline=true;
   v.setAttribute('muted','');v.setAttribute('playsinline','');
