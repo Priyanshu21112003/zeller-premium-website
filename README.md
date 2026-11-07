@@ -1,14 +1,35 @@
 # ZELLER — Celebrate You
 
-Premium editorial website prototype. Static build: deploy the repository root as the site root.
+A premium, editorial-style static website prototype for ZELLER, built around the ZELLER brand palette and its visual identity.
 
 ## Preview locally
-Run `python3 -m http.server 8000` from the repository root, then open http://localhost:8000.
 
-## Assets
-All brand images, ZELLER wordmark and animated GIF fallbacks are stored in `assets/`. Keep the `assets/` folder beside `index.html`; do not deploy the HTML file on its own.
+The site is a single self-contained HTML file. Open `index.html` in a modern browser, or run:
 
-HD MP4 chandelier footage streams from Pexels and needs internet access. When it cannot play, local animated GIF fallbacks remain available. Product names/specifications and enquiry/newsletter interactions are prototype content, not production catalogue/CRM integrations.
+```bash
+python3 -m http.server 8000
+```
+
+Then visit http://localhost:8000.
+
+## Assets and media
+
+- The ZELLER wordmark, crystal imagery and animated GIF fallback visuals are embedded directly inside `index.html`.
+- There is no separate assets folder to move or upload.
+- Chandelier MP4 footage is streamed from Pexels and needs an internet connection. The embedded animated GIF visuals remain visible if a video source does not load or autoplay is blocked.
+- Images, logos and GIF fallbacks do not depend on relative file paths.
 
 ## Deploy
-Use GitHub Pages or Vercel with the repository root (`.`) as the static output directory.
+
+### GitHub Pages
+1. Open the repository Settings.
+2. Go to Pages.
+3. Choose **Deploy from a branch**.
+4. Select `main` and `/ (root)`, then save.
+
+### Vercel
+Import this repository and select **Other** as the framework preset. Set the output directory to `.` (repository root).
+
+## Prototype notes
+
+Product names, specifications and project descriptions are illustrative placeholders. Enquiry and newsletter interactions are demonstration-only and are not connected to a CRM. Replace concept content and remote footage with approved ZELLER catalogue information and licensed brand films before production.
